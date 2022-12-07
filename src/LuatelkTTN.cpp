@@ -40,6 +40,10 @@ void LualtekTTN::debugPrintln(int message) {
   }
 }
 
+void LualtekTTN::resetSendInterval() {
+  this->previousMillis = millis();
+}
+
 void LualtekTTN::delayMillis(unsigned long millisToWait) {
   unsigned long currentMillis = millis();
   while (millis() < currentMillis + millisToWait);

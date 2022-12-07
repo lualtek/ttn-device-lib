@@ -57,6 +57,7 @@ class LualtekTTN {
     void delayMillis(unsigned long millisToWait);
     /* Calculate if should send uplink based on duty cycle */
     bool canSendUplink();
+    void resetSendInterval();
     /* Setup the device with common operations to be done, like setting the device duty cycle, class, region etc */
     void setup();
 
