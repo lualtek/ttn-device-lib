@@ -2,7 +2,6 @@
 
 LualtekTTN::LualtekTTN(
   unsigned long dutyCycleMs,
-  lorawan_class_t deviceClass,
   Stream &debugStream,
   bool debugEnabled
 ) {
@@ -18,7 +17,6 @@ LualtekTTN::LualtekTTN(
     dutyCycleMs
   };
 
-  this->deviceClass = deviceClass;
   this->uplinkInterval = dutyCycleMs;
   this->debugStream = &debugStream;
   this->debugEnabled = debugEnabled;
