@@ -53,7 +53,7 @@ struct DutyCycleMs {
 class LualtekTTN {
   public:
     /* Please use one of the available MINUTES_X_IN_MILLISECONDS constants for dutyCycleMs */
-    LualtekTTN(unsigned long dutyCycleMs, lorawan_class_t deviceClass, ttn_fp_t deviceRegion, Stream &debugStream, bool debugEnabled);
+    LualtekTTN(unsigned long dutyCycleMs, Stream &debugStream, bool debugEnabled);
     void delayMillis(unsigned long millisToWait);
     /* Calculate if should send uplink based on duty cycle */
     bool canSendUplink();
@@ -93,8 +93,5 @@ class LualtekTTN {
 
     Stream *debugStream = NULL;
     bool debugEnabled = false;
-
-    lorawan_class_t deviceClass;
-    ttn_fp_t deviceRegion;
 };
 #endif

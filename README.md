@@ -1,6 +1,5 @@
 # Lualtek device library for TTN + RN2483 + ATMega320u
 
-
 ## How to use it
 
 When developing a firmware using Platformio just add the repository link to your `platformio.ini` file:
