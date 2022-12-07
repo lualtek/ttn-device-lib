@@ -132,7 +132,7 @@ void LualtekTTN::onDownlinkReceived(const uint8_t *payload, size_t size, port_t 
   }
 }
 
-void LualtekTTN::setup() {
+void LualtekTTN::setupAndJoin() {
   // Setup duty cycle from EEPROM if available or use default
   int currentDutyCycleIndex = EEPROM.read(EEPROM_ADDRESS_DUTY_CYCLE_INDEX);
   if (currentDutyCycleIndex >= MINUTES_60_COMMAND_INDEX && currentDutyCycleIndex <= MINUTES_DEFAULT_COMMAND_INDEX) {
@@ -140,4 +140,7 @@ void LualtekTTN::setup() {
   } else {
     this->handleChangeDutyCycle(MINUTES_DEFAULT_COMMAND_INDEX);
   }
+
+  this->delayMillis(2000 + random(0, 1000));
+  this->onJoinCallback();
 }
