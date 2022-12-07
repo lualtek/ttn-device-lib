@@ -20,6 +20,7 @@ typedef uint8_t port_t;
 
 #define DOWNLINK_ACTION_COMMAND_PORT 1
 #define DOWNLINK_ACTION_CHANGE_INTERVAL_PORT 3
+#define DOWNLINK_ACTION_CHANGE_STEPPER_TIME_PORT 4
 #define DOWNLINK_ACTION_REJOIN_PORT 10
 
 #define MINUTES_60_IN_MILLISECONDS 3600000
@@ -76,6 +77,9 @@ class LualtekTTN {
     */
     void onDownlinkReceived(const uint8_t *payload, size_t size, port_t port);
 
+
+    void handleChangeDutyCycle(int commandIndex);
+
   private:
     unsigned long previousMillis;
     unsigned long uplinkInterval;
@@ -86,8 +90,6 @@ class LualtekTTN {
     void debugPrintln(const String &s);
     void debugPrintln(const char[]);
     void debugPrintln(int i);
-
-    void handleChangeDutyCycle(int commandIndex);
 
     void (*onSendUplinkCallback)(int appPort);
     void (*onJoinCallback)(void);
