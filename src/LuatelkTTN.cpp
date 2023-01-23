@@ -22,6 +22,10 @@ LualtekTTN::LualtekTTN(
   this->ttn = &ttn;
 }
 
+unsigned long LualtekTTN::getUplinkInterval() {
+  return this->uplinkInterval;
+}
+
 void LualtekTTN::resetSendInterval() {
   this->previousMillis = millis();
 }

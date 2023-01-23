@@ -87,9 +87,14 @@ class LualtekTTN {
 
     void handleChangeDutyCycle(int commandIndex);
 
+    /**
+     * @brief Get current duty cycle in milliseconds
+    */
+    unsigned long getUplinkInterval();
+
   private:
-    unsigned long previousMillis;
     unsigned long uplinkInterval;
+    unsigned long previousMillis;
 
     lualtek_dowlink_command_dutycycle_index_t defaultDutyCycleIndex;
     lorawan_class_t deviceClass;
