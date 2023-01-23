@@ -1,43 +1,25 @@
 #include "LualtekTTN.h"
+#include "EEPROM.h"
+
+bool isDutyCycleIndex(unsigned int commandIndex) {
+  return commandIndex >= 0 && commandIndex <= sizeof(dutyCycleCommandTable) - 1;
+}
 
 LualtekTTN::LualtekTTN(
-  unsigned long dutyCycleMs,
-  Stream &debugStream,
-  bool debugEnabled
+  const char *appEui,
+  const char *appKey,
+  lorawan_class_t deviceClass,
+  lualtek_dowlink_command_dutycycle_index_t dutyCycleIndex,
+  TheThingsNetwork &ttn,
+  Stream &debugStream
 ) {
   this->previousMillis = 0;
-  this->dutyCycleMs = {
-    MINUTES_60_IN_MILLISECONDS,
-    MINUTES_40_IN_MILLISECONDS,
-    MINUTES_30_IN_MILLISECONDS,
-    MINUTES_20_IN_MILLISECONDS,
-    MINUTES_15_IN_MILLISECONDS,
-    MINUTES_10_IN_MILLISECONDS,
-    MINUTES_5_IN_MILLISECONDS,
-    dutyCycleMs
-  };
-
-  this->uplinkInterval = dutyCycleMs;
+  this->defaultDutyCycleIndex = dutyCycleIndex;
+  this->appEui = appEui;
+  this->appKey = appKey;
+  this->deviceClass = deviceClass;
   this->debugStream = &debugStream;
-  this->debugEnabled = debugEnabled;
-}
-
-void LualtekTTN::debugPrint(const char *message) {
-  if (this->debugEnabled && this->debugStream != NULL) {
-    this->debugStream->print(message);
-  }
-}
-
-void LualtekTTN::debugPrintln(const char *message) {
-  if (this->debugEnabled && this->debugStream != NULL) {
-    this->debugStream->println(message);
-  }
-}
-
-void LualtekTTN::debugPrintln(int message) {
-  if (this->debugEnabled && this->debugStream != NULL) {
-    this->debugStream->println(message);
-  }
+  this->ttn = &ttn;
 }
 
 void LualtekTTN::resetSendInterval() {
@@ -50,52 +32,15 @@ void LualtekTTN::delayMillis(unsigned long millisToWait) {
 }
 
 void LualtekTTN::handleChangeDutyCycle(int commandIndex) {
-  int dutyCycleIndexAssinged = -1;
-
-  switch (commandIndex) {
-    case MINUTES_60_COMMAND_INDEX:
-      this->uplinkInterval = this->dutyCycleMs.minutes60;
-      dutyCycleIndexAssinged = MINUTES_60_COMMAND_INDEX;
-      break;
-    case MINUTES_40_COMMAND_INDEX:
-      this->uplinkInterval = this->dutyCycleMs.minutes40;
-      dutyCycleIndexAssinged = MINUTES_40_COMMAND_INDEX;
-      break;
-    case MINUTES_30_COMMAND_INDEX:
-      this->uplinkInterval = this->dutyCycleMs.minutes30;
-      dutyCycleIndexAssinged = MINUTES_30_COMMAND_INDEX;
-      break;
-    case MINUTES_20_COMMAND_INDEX:
-      this->uplinkInterval = this->dutyCycleMs.minutes20;
-      dutyCycleIndexAssinged = MINUTES_20_COMMAND_INDEX;
-      break;
-    case MINUTES_15_COMMAND_INDEX:
-      this->uplinkInterval = this->dutyCycleMs.minutes15;
-      dutyCycleIndexAssinged = MINUTES_15_COMMAND_INDEX;
-      break;
-    case MINUTES_10_COMMAND_INDEX:
-      this->uplinkInterval = this->dutyCycleMs.minutes10;
-      dutyCycleIndexAssinged = MINUTES_10_COMMAND_INDEX;
-      break;
-    case MINUTES_5_COMMAND_INDEX:
-      this->uplinkInterval = this->dutyCycleMs.minutes5;
-      dutyCycleIndexAssinged = MINUTES_5_COMMAND_INDEX;
-      break;
-    case MINUTES_DEFAULT_COMMAND_INDEX:
-      this->uplinkInterval = this->dutyCycleMs.minutesDefault;
-      dutyCycleIndexAssinged = MINUTES_DEFAULT_COMMAND_INDEX;
-      break;
-    default:
-      break;
+  if (!isDutyCycleIndex(commandIndex)) {
+    return;
   }
 
-  if (dutyCycleIndexAssinged != -1) {
-    this->debugPrintln("Duty cycle changed");
-    this->debugPrint("Duty cycle: ");
-    this->debugPrintln(this->uplinkInterval);
-
-    EEPROM.update(EEPROM_ADDRESS_DUTY_CYCLE_INDEX, dutyCycleIndexAssinged);
-  }
+  this->uplinkInterval = dutyCycleCommandTable[commandIndex];
+  EEPROM.update(EEPROM_ADDRESS_DUTY_CYCLE_INDEX, commandIndex);
+  this->debugStream->println("Duty cycle changed");
+  this->debugStream->print("Duty cycle: ");
+  this->debugStream->println(this->uplinkInterval);
 }
 
 bool LualtekTTN::canSendUplink() {
@@ -113,34 +58,28 @@ void LualtekTTN::onSendUplink(void (*callback)(int appPort)) {
   this->onSendUplinkCallback = callback;
 }
 
-void LualtekTTN::onJoin(void (*callback)(void)) {
-  this->onJoinCallback = callback;
+void LualtekTTN::join() {
+  this->delayMillis(random(500, 8000));
+  this->ttn->join(this->appEui, this->appKey, -1, 5000, this->deviceClass);
 }
 
 void LualtekTTN::onDownlinkReceived(const uint8_t *payload, size_t size, port_t port) {
   switch(port) {
     case DOWNLINK_ACTION_CHANGE_INTERVAL_PORT:
-      this->debugPrintln("Received downlink for changing duty cycle");
+      this->debugStream->println("Received downlink for changing duty cycle");
       this->handleChangeDutyCycle(payload[0]);
       break;
     case DOWNLINK_ACTION_REJOIN_PORT:
-      this->debugPrintln("Received downlink for rejoin. Rejoining...");
-      this->onJoinCallback();
+      this->debugStream->println("Received downlink for rejoin. Rejoining...");
+      this->join();
       break;
     default:
       break;
   }
 }
 
-void LualtekTTN::setupAndJoin() {
+void LualtekTTN::setup() {
   // Setup duty cycle from EEPROM if available or use default
   int currentDutyCycleIndex = EEPROM.read(EEPROM_ADDRESS_DUTY_CYCLE_INDEX);
-  if (currentDutyCycleIndex >= MINUTES_60_COMMAND_INDEX && currentDutyCycleIndex <= MINUTES_DEFAULT_COMMAND_INDEX) {
-    this->handleChangeDutyCycle(currentDutyCycleIndex);
-  } else {
-    this->handleChangeDutyCycle(MINUTES_DEFAULT_COMMAND_INDEX);
-  }
-
-  this->delayMillis(2000 + random(0, 1000));
-  this->onJoinCallback();
+  this->handleChangeDutyCycle(isDutyCycleIndex(currentDutyCycleIndex) ? currentDutyCycleIndex : this->defaultDutyCycleIndex);
 }
