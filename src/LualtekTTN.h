@@ -67,7 +67,7 @@ class LualtekTTN {
     bool canSendUplink();
     void resetSendInterval();
     /* Setup the device with common operations to be done, like setting the device duty cycle, class, region etc */
-    void setup();
+    void setupSettings();
 
     void join();
 

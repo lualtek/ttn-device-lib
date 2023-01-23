@@ -86,7 +86,7 @@ void LualtekTTN::onDownlinkReceived(const uint8_t *payload, size_t size, port_t 
   }
 }
 
-void LualtekTTN::setup() {
+void LualtekTTN::setupSettings() {
   // Setup duty cycle from EEPROM if available or use default
   int currentDutyCycleIndex = EEPROM.read(EEPROM_ADDRESS_DUTY_CYCLE_INDEX);
   this->handleChangeDutyCycle(isDutyCycleIndex(currentDutyCycleIndex) ? currentDutyCycleIndex : this->defaultDutyCycleIndex);
