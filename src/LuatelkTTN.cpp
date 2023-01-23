@@ -15,6 +15,7 @@ LualtekTTN::LualtekTTN(
 ) {
   this->previousMillis = 0;
   this->defaultDutyCycleIndex = dutyCycleIndex;
+  this->uplinkInterval = dutyCycleCommandTable[dutyCycleIndex];
   this->appEui = appEui;
   this->appKey = appKey;
   this->deviceClass = deviceClass;
