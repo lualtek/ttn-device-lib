@@ -38,6 +38,9 @@ void LualtekTTN::delayMillis(unsigned long millisToWait) {
 
 void LualtekTTN::handleChangeDutyCycle(int commandIndex) {
   if (!isDutyCycleIndex(commandIndex)) {
+    this->debugStream->println("Invalid duty cycle index");
+    this->debugStream->print("Duty cycle index: ");
+    this->debugStream->println(commandIndex);
     return;
   }
 
