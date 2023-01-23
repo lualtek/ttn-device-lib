@@ -40,7 +40,7 @@ enum lualtek_dutycycle_ms_t {
   MINUTES_1_IN_MILLISECONDS = 60000
 };
 
-const lualtek_dutycycle_ms_t dutyCycleCommandTable[] PROGMEM = {
+const lualtek_dutycycle_ms_t dutyCycleCommandTable[] = {
   MINUTES_60_IN_MILLISECONDS,
   MINUTES_40_IN_MILLISECONDS,
   MINUTES_30_IN_MILLISECONDS,
@@ -67,7 +67,7 @@ class LualtekTTN {
     bool canSendUplink();
     void resetSendInterval();
     /* Setup the device with common operations to be done, like setting the device duty cycle, class, region etc */
-    void setupSettings();
+    void setup();
 
     void join();
 
