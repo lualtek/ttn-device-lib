@@ -1,0 +1,10 @@
+LualtekTTN	KEYWORD1
+canSendUplink	KEYWORD2
+delayMillis	KEYWORD2
+getUplinkInterval	KEYWORD2
+handleChangeDutyCycle	KEYWORD2
+join	KEYWORD2
+onDownlinkReceived	KEYWORD2
+onSendUplink	KEYWORD2
+resetSendInterval	KEYWORD2
+setup	KEYWORD2

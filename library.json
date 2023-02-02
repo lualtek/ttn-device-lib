@@ -1,6 +1,6 @@
 {
   "name": "ttn-device-lib",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Helpers function for RN module with TTN library",
   "repository":
   {
@@ -16,7 +16,7 @@
       "maintainer": true
     }
   ],
-  "license": "Apache-2.0",
+  "license": "MIT",
   "frameworks": "arduino",
   "platforms": "atmelavr"
 }

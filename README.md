@@ -9,5 +9,7 @@ When developing a firmware using Platformio just add the repository link to your
 platform = atmelavr
 board = leonardo
 framework = arduino
-lib_deps = thethingsnetwork/TheThingsNetwork@^2.7.2
+lib_deps =
+  https://github.com/lualtek/ttn-device-lib.git
+  thethingsnetwork/TheThingsNetwork@^2.7.2
 ```
