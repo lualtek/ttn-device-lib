@@ -1,5 +1,12 @@
 #include "LualtekTTN.h"
-#include "EEPROM.h"
+#include "DutyCycleHandler.h"
+#if defined(__SAMD21G18A__) || defined(__SAMD21J18A__) || defined(__SAMD21E18A__)
+// SAMD21 microcontroller detected
+#include <FlashAsEEPROM.h>
+#else
+// Assume a different microcontroller, use EEPROM library
+#include <EEPROM.h>
+#endif
 
 bool isDutyCycleIndex(unsigned int commandIndex) {
   return commandIndex >= 0 && commandIndex <= sizeof(dutyCycleCommandTable) - 1;
@@ -46,6 +53,11 @@ void LualtekTTN::handleChangeDutyCycle(int commandIndex) {
 
   this->uplinkInterval = dutyCycleCommandTable[commandIndex];
   EEPROM.update(EEPROM_ADDRESS_DUTY_CYCLE_INDEX, commandIndex);
+  #include "DutyCycleHandler.h"
+#if defined(__SAMD21G18A__) || defined(__SAMD21J18A__) || defined(__SAMD21E18A__)
+  // SAMD21 microcontroller detected
+  EEPROM.commit();
+#endif
   this->debugStream->println("Duty cycle changed");
   this->debugStream->print("Duty cycle: ");
   this->debugStream->println(this->uplinkInterval);
