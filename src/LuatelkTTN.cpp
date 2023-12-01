@@ -52,7 +52,6 @@ void LualtekTTN::handleChangeDutyCycle(int commandIndex) {
 
   this->uplinkInterval = dutyCycleCommandTable[commandIndex];
   EEPROM.update(EEPROM_ADDRESS_DUTY_CYCLE_INDEX, commandIndex);
-  #include "DutyCycleHandler.h"
 #if defined(__SAMD21G18A__) || defined(__SAMD21J18A__) || defined(__SAMD21E18A__)
   // SAMD21 microcontroller detected
   EEPROM.commit();
