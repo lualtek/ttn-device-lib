@@ -1,5 +1,4 @@
 #include "LualtekTTN.h"
-#include "DutyCycleHandler.h"
 #if defined(__SAMD21G18A__) || defined(__SAMD21J18A__) || defined(__SAMD21E18A__)
 // SAMD21 microcontroller detected
 #include <FlashAsEEPROM.h>
