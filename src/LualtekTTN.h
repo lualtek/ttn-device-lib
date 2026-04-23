@@ -81,6 +81,7 @@ class LualtekTTN {
     Stream *_debugStream = NULL;
     TheThingsNetwork *_ttn = NULL;
 
+    void systemWait(unsigned long ms);
     bool isValidDutyCycleIndex(int index);
 };
 
